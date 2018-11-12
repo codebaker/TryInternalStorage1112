@@ -13,7 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
 
     @Override
@@ -39,20 +39,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     byte[] buffer = new byte[fileInputStream.available()];
                     fileInputStream.read(buffer);
                     editTextFileContents.setText(new String(buffer));
-                    //save and close
-                    fileInputStream.close();
                     break;
                 case R.id.buttonWrite:
                     fileOutputStream = openFileOutput(editTextFileName.getText().toString(),Context.MODE_PRIVATE);
                     fileOutputStream.write(editTextFileContents.getText().toString().getBytes());
                     editTextFileContents.setText("");
-                    fileOutputStream.close();
                     break;
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            //예외가 발생했어도 반듯이 실행해야 하는 코드.
+            //예를 들어... file이나 db의 close()문
+            try{
+                if(fileInputStream!=null){
+                    fileInputStream.close();
+                }
+                if(fileOutputStream!=null){
+                    fileOutputStream.close();
+                }
+            }catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
         }
     }
 }
